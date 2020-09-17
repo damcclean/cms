@@ -31,7 +31,7 @@ class AssetsController extends CpController
     {
         $asset = Asset::find(base64_decode($asset));
 
-        // TODO: Auth
+        $this->authorize('view', $asset);
 
         return new AssetResource($asset);
     }
@@ -89,7 +89,7 @@ class AssetsController extends CpController
     {
         $asset = Asset::find(base64_decode($asset));
 
-        // TODO: Auth
+        $this->authorize('view', $asset);
 
         $file = $asset->path();
 
