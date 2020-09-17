@@ -69,11 +69,6 @@ class AssetRepository implements Contract
         });
     }
 
-    public function whereUrl($url)
-    {
-        return $this->findByUrl($url); // TODO: Replace usages with findByUrl
-    }
-
     public function findById(string $id)
     {
         [$container_id, $path] = explode('::', $id);
@@ -84,11 +79,6 @@ class AssetRepository implements Contract
         }
 
         return $container->asset($path);
-    }
-
-    public function whereId($id)
-    {
-        return $this->findById($id); // TODO: Replace usages with findById
     }
 
     public function findByPath(string $path)
