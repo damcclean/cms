@@ -49,7 +49,7 @@ abstract class Builder
 
     protected function defaultPerPageSize()
     {
-        return 15; // TODO get from config.
+        return config('statamic.cp.pagination_size');
     }
 
     public function orderBy($column, $direction = 'asc')
