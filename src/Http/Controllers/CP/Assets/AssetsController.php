@@ -29,7 +29,7 @@ class AssetsController extends CpController
 
     public function show($asset)
     {
-        $asset = Asset::find(base64_decode($asset));
+        $asset = Asset::find(utf8_encode(base64_decode($asset)));
 
         // TODO: Auth
 
@@ -38,7 +38,7 @@ class AssetsController extends CpController
 
     public function update(Request $request, $asset)
     {
-        $asset = Asset::find(base64_decode($asset));
+        $asset = Asset::find(utf8_encode(base64_decode($asset)));
 
         $this->authorize('edit', $asset);
 
@@ -107,7 +107,7 @@ class AssetsController extends CpController
 
     public function destroy($asset)
     {
-        $asset = Asset::find(base64_decode($asset));
+        $asset = Asset::find(utf8_encode(base64_decode($asset)));
 
         // TODO: Auth
 
