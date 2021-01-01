@@ -49,7 +49,7 @@ export default {
         },
 
         modalBody() {
-            return __('Are you sure you want to delete this item?');
+            return __('Are you sure you want to delete this item? Any references to this item will break.');
         },
 
         deleteUrl() {
