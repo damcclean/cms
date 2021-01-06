@@ -98,7 +98,7 @@
                         >
                             <template #actions="{ shouldShowSidebar }">
 
-                                <div :class="{ 'hi': !shouldShowSidebar }">
+                                <div v-if="collectionHasRoutes" :class="{ 'hi': !shouldShowSidebar }">
 
                                     <div class="p-2 flex items-center -mx-1">
                                         <button
@@ -299,6 +299,7 @@ export default {
         canEditBlueprint: Boolean,
         createAnotherUrl: String,
         listingUrl: String,
+        collectionHasRoutes: Boolean,
     },
 
     data() {
