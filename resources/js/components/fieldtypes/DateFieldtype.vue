@@ -137,6 +137,13 @@ export default {
                 date = null;
             }
 
+            if (this.config.mode === 'range') {
+                date = {
+                    start: Vue.moment(this.date.start).tz('UTC', true).format(this.format),
+                    end: Vue.moment(this.date.end).tz('UTC', true).format(this.format)
+                }
+            }
+
             this.update(date);
         },
 
