@@ -63,6 +63,13 @@ class FileCacher extends AbstractCacher
         return File::get($this->getFilePath($url));
     }
 
+    public function hasCachedPage(Request $request)
+    {
+        $url = $this->getUrl($request);
+
+        return File::exists($this->getFilePath($url));
+    }
+
     /**
      * Flush out the entire static cache.
      *
@@ -136,7 +143,7 @@ class FileCacher extends AbstractCacher
         return sprintf('%s%s_%s.html',
             $this->getCachePath(),
             $parts['path'],
-            array_get($parts, 'query', '')
+            $this->config('ignore_query_strings') ? '' : array_get($parts, 'query', '')
         );
     }
 }

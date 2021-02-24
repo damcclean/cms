@@ -3,8 +3,12 @@
 namespace Statamic\Fieldtypes;
 
 use ProseMirrorToHtml\Renderer;
+use Statamic\Facades\GraphQL;
 use Statamic\Fields\Fields;
 use Statamic\Fieldtypes\Bard\Augmentor;
+use Statamic\GraphQL\Types\BardSetsType;
+use Statamic\GraphQL\Types\BardTextType;
+use Statamic\GraphQL\Types\ReplicatorSetType;
 use Statamic\Query\Scopes\Filters\Fields\Bard as BardFilter;
 use Statamic\Support\Arr;
 
@@ -114,6 +118,20 @@ class Bard extends Replicator
                 'default' => true,
                 'width' => 50,
             ],
+            'enable_input_rules' => [
+                'display' => __('Enable Input Rules'),
+                'instructions' => __('statamic::fieldtypes.bard.config.enable_input_rules'),
+                'type' => 'toggle',
+                'default' => true,
+                'width' => 50,
+            ],
+            'enable_paste_rules' => [
+                'display' => __('Enable Paste Rules'),
+                'instructions' => __('statamic::fieldtypes.bard.config.enable_paste_rules'),
+                'type' => 'toggle',
+                'default' => true,
+                'width' => 50,
+            ],
         ];
     }
 
@@ -180,6 +198,8 @@ class Bard extends Replicator
         if (array_get($row, 'attrs.enabled', true) === true) {
             unset($row['attrs']['enabled']);
         }
+
+        $row['attrs']['values'] = Arr::removeNullValues($row['attrs']['values']);
 
         return $row;
     }
@@ -369,5 +389,43 @@ class Bard extends Replicator
 
             return $item;
         })->all();
+    }
+
+    public function toGqlType()
+    {
+        return $this->config('sets') ? parent::toGqlType() : GraphQL::string();
+    }
+
+    public function addGqlTypes()
+    {
+        $types = collect($this->config('sets'))
+            ->each(function ($set, $handle) {
+                $this->fields($handle)->all()->each(function ($field) {
+                    $field->fieldtype()->addGqlTypes();
+                });
+            })
+            ->map(function ($config, $handle) {
+                $type = new ReplicatorSetType($this, $this->gqlSetTypeName($handle), $handle);
+
+                return [
+                    'handle' => $handle,
+                    'name' => $type->name,
+                    'type' => $type,
+                ];
+            })->values();
+
+        $text = new BardTextType($this);
+
+        $types->push([
+            'handle' => 'text',
+            'name' => $text->name,
+            'type' => $text,
+        ]);
+
+        GraphQL::addTypes($types->pluck('type', 'name')->all());
+
+        $union = new BardSetsType($this, $this->gqlSetsTypeName(), $types);
+
+        GraphQL::addType($union);
     }
 }

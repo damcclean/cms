@@ -56,7 +56,8 @@ abstract class AbstractCacher implements Cacher
      */
     public function getDefaultExpiration()
     {
-        return $this->config('default_cache_length');
+        return $this->config('expiry')
+            ?? $this->config('default_cache_length'); // deprecated
     }
 
     /**
@@ -272,5 +273,10 @@ abstract class AbstractCacher implements Cacher
         $domain = $domain ?: $this->getBaseUrl();
 
         return $this->normalizeKey($this->makeHash($domain).'.urls');
+    }
+
+    public function hasCachedPage(Request $request)
+    {
+        return $this->getCachedPage($request) !== null;
     }
 }
